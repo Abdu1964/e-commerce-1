@@ -4,7 +4,7 @@ const port = 5000;
 const mongoose = require('mongoose');
 const db = require('./config/keys').mongoURI; // Assuming you have a separate file with the MongoDB URI
 //const connection_url= 'mongodb+srv://abdum14:Abtayd.rum@cluster0.ixyf4u9.mongodb.net/'
-// Connect to MongoDB
+// Connect to MongoDatabase
  mongoose
    .connect(db)
    .then(() => console.log('MongoDB connected'))
