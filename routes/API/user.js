@@ -3,6 +3,8 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const validateRegisterInput = require('./../../validations/regiister');
 const User = require('../../model/User'); // Import the User model
+const  jwt = require('jsonwebtoken');//for web token JWT
+const keys = require('../../config/keys');//to access the secret key
 
 // @route GET api/users/test
 // @desc tests users route
@@ -52,7 +54,25 @@ router.post('/login', (req, res) => {
       bcrypt.compare(password, user.password)
         .then(isMatch => {
           if (isMatch) {
-            res.json({ msg: 'Success' });
+            //res.json({ msg: 'Success' });
+            //*************** */
+            //JWT 
+       //****************
+       //user match
+       const payload = {id:user.id,name:user.name}
+       //sign token
+       jwt.sign(
+         payload,
+         keys.secret,
+        {expiresIn: 3600},
+        (err,token)=> {
+         res.json({ 
+  success: true,
+  token: 'Bearer ' + token
+});
+        }
+        );
+
           } else {
             return res.status(400).json({ password: 'Incorrect password' });
           }
