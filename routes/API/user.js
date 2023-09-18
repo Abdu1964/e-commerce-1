@@ -2,9 +2,11 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const validateRegisterInput = require('./../../validations/regiister');
-const User = require('../../model/User'); // Import the User model
+const User = require('./../../model/User'); // Import the User model
 const  jwt = require('jsonwebtoken');//for web token JWT
-const keys = require('../../config/keys');//to access the secret key
+const keys = require('./../../config/keys');//to access the secret key
+ 
+
 
 // @route GET api/users/test
 // @desc tests users route
@@ -81,6 +83,33 @@ router.post('/login', (req, res) => {
     })
     .catch(err => console.log(err));
 });
+
+
+const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
+ 
+const passport = require('passport');
+require('../../config/passport')(passport);
+//Protected Route
+//********************** */
+//@route GET api/users/current
+//@desc return current user
+//@access private
+
+ 
+const { json } = require('body-parser');
+router.get ('/current',passport.authenticate('jwt',{session:false}),
+(req,res)=>{
+  
+ // res.json({msg : 'success'}) //res.json(200).send('success')
+ //res.json(req.user) //i shouldn't use this as a resposnse because i don want to show all my private information
+ res.json({
+  id: req.user.id,
+  name:req.user.name,
+  email:req.user.email
+ })
+
+}
+)
 
 module.exports = router;
  
