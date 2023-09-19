@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const validateRegisterInput = require('./../../validations/regiister');
+ 
+
 const User = require('./../../model/User'); // Import the User model
 const  jwt = require('jsonwebtoken');//for web token JWT
 const keys = require('./../../config/keys');//to access the secret key
+
+const validateRegisterInput = require('../../validations/register');
+const validateLoginInput = require('../../validations/login')
  
 
 
@@ -14,6 +18,13 @@ const keys = require('./../../config/keys');//to access the secret key
 router.get('/test', (req, res) => res.json({ msg: 'user works' }));
 
 router.post('/register', (req, res) => {
+
+  const {errors, isValid} = validateRegisterInput(req.body)
+//check validation
+  if (!isValid){
+    return  res.status(400).json(errors)
+  }
+
   User.findOne({ email: req.body.email }).then((user) => {
     if (user) {
       return res.status(400).json({ email: 'Email already exists' });
@@ -41,6 +52,13 @@ router.post('/register', (req, res) => {
 // @desc    Login User / Returning JWT Token
 // @access  Public
 router.post('/login', (req, res) => {
+
+  const {errors, isValid} = validateLoginInput(req.body)
+  //check validation
+    if (!isValid){
+      return  res.status(400).json(errors)
+    }
+
   const email = req.body.email;
   const password = req.body.password;
 
