@@ -56,6 +56,7 @@ router.post('/login', (req, res) => {
   const {errors, isValid} = validateLoginInput(req.body)
   //check validation
     if (!isValid){
+      console.log(errors)
       return  res.status(400).json(errors)
     }
 
@@ -86,10 +87,12 @@ router.post('/login', (req, res) => {
          keys.secret,
         {expiresIn: 3600},
         (err,token)=> {
+
          res.json({ 
   success: true,
   token: 'Bearer ' + token
 });
+console.log('Bearer ' +token)
         }
         );
 
@@ -128,6 +131,69 @@ router.get ('/current',passport.authenticate('jwt',{session:false}),
 
 }
 )
+
+// @route GET api/users
+// @desc Get all users
+// @access Public
+router.get('/', (req, res) => {
+  User.find()
+    .then(users => res.json(users))
+    .catch(err => console.log(err));
+});
+
+// @route GET api/users/:id
+// @desc Get a user by ID
+// @access Public
+router.get('/:id', (req, res) => {
+  const userId = req.params.id;
+
+  User.findById(userId)
+    .then(user => {
+      if (!user) {
+        return res.status(404).json({ user: 'User not found' });
+      }
+
+      res.json(user);
+    })
+    .catch(err => console.log(err));
+});
+
+// @route PUT api/users/:id
+// @desc Update a user
+// @access Public
+router.put('/:id', (req, res) => {
+  const userId = req.params.id;
+  const { name, email } = req.body;
+
+  User.findById(userId)
+    .then(user => {
+      if (!user) {
+        return res.status(404).json({ user: 'User not found' });
+      }
+
+      user.name = name;
+      user.email = email;
+
+      user
+        .save()
+        .then(updatedUser => res.json(updatedUser))
+        .catch(err => console.log(err));
+    })
+    .catch(err => console.log(err));
+});
+
+// @route DELETE api/users/:id
+// @desc Delete a user
+// @access Public
+router.delete('/:id', (req, res) => {
+  const userId = req.params.id;
+
+  User.findByIdAndRemove(userId)
+    .then(() =>
+      res.json({ success: true, message: 'User deleted successfully' })
+    )
+    .catch(err => console.log(err));
+});
 
 module.exports = router;
  
