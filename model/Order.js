@@ -5,6 +5,11 @@ const orderSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  handle: {
+    type: String,
+    required: true,
+    max: 40
+  },
   products: [{
     productId: {
       type: mongoose.Schema.Types.ObjectId,
