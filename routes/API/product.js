@@ -4,7 +4,6 @@ const router= express.Router();
 //@desc tests users route
 //@access public
 
-
 router.get('/test',(req , res) => res.json({msg: 'product  works'})
 );
 
@@ -44,6 +43,7 @@ router.post('/products', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 // PUT /products/:id - Update a specific product
 router.put('/products/:id', async (req, res) => {
